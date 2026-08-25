@@ -1,1215 +1,241 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" id="htmlRoot">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MRX STORE | متجر هاكات 2026</title>
+    <title>متجر MRX – 2026</title>
+    <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&family=Changa:wght@500;800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --bg-color: #050711;
-            --card-bg: rgba(15, 22, 41, 0.85);
-            --primary-color: #8a2be2;
-            --accent-color: #00f2fe;
-            --neon-pink: #ff007f;
-            --green-color: #10b981;
-            --green-hover: #059669;
-            --accent-red: #ff3b30;
-            --text-color: #ffffff;
-            --text-dim: #94a3b8;
-            --border-color: rgba(255, 255, 255, 0.12);
-            --card-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
-            --gold-gradient: linear-gradient(135deg, #fff2a3 0%, #ffd700 50%, #cca100 100%);
-            --font-scale: 1rem;
-            --transition-speed: 0.4s;
-        }
-
-        body.light-theme {
-            --bg-color: #f8fafc;
-            --card-bg: rgba(255, 255, 255, 0.92);
-            --text-color: #0f172a;
-            --text-dim: #475569;
-            --border-color: rgba(138, 43, 226, 0.25);
-            --card-shadow: 0 15px 35px rgba(138, 43, 226, 0.12);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0; padding: 0;
-            font-family: 'Cairo', sans-serif;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent !important;
-            outline: none !important;
-        }
-
-        html {
-            font-size: var(--font-scale);
-            touch-action: manipulation;
-            scroll-behavior: smooth;
-        }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-color); }
-        ::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            padding: 20px 10px;
-            overflow-x: hidden;
-            transition: background-color 0.4s ease, color 0.4s ease;
-        }
-
-        #particleCanvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100vw; height: 100vh;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .scroll-progress {
-            position: fixed;
-            top: 0; left: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent-color), var(--neon-pink));
-            width: 0%;
-            z-index: 100000;
-        }
-
-        .top-settings-bar {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%;
-            height: 60px;
-            background: rgba(5, 7, 17, 0.85);
-            backdrop-filter: blur(12px);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 15px;
-            border-bottom: 1px solid var(--border-color);
-            z-index: 10000;
-        }
-
-        .bar-left-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .top-btn-icon {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            padding: 6px 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: 0.3s;
-        }
-        .top-btn-icon:hover {
-            background: var(--primary-color);
-            border-color: var(--accent-color);
-        }
-
-        .enc-btn {
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-weight: 900;
-            font-size: 0.8rem;
-            cursor: pointer;
-            border: none;
-            color: #000;
-            transition: transform 0.2s;
-        }
-        .enc-btn:active { transform: scale(0.95); }
-        .btn-lua { background-color: #007bc0; color: #fff; }
-        .btn-py { background-color: #ffde57; color: #000; }
-        .btn-html { background-color: #10b981; color: #fff; }
-
-        .bar-title {
-            font-family: 'Changa', sans-serif;
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: var(--text-color);
-        }
-
-        .menu-toggle {
-            width: 28px;
-            height: 22px;
-            position: relative;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            z-index: 10002;
-        }
-
-        .menu-toggle span {
-            display: block;
-            height: 3px;
-            width: 100%;
-            background-color: #ffffff;
-            border-radius: 3px;
-            transition: all var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-
-        .menu-toggle.active span:nth-child(1) { transform: translateY(9.5px) rotate(45deg); background-color: var(--accent-red); }
-        .menu-toggle.active span:nth-child(2) { opacity: 0; transform: scale(0); }
-        .menu-toggle.active span:nth-child(3) { transform: translateY(-9.5px) rotate(-45deg); background-color: var(--accent-red); }
-
-        .sidebar {
-            width: 260px; height: 100vh; background-color: #000000;
-            border-left: 1px solid var(--border-color); position: fixed;
-            top: 0; right: -260px; transition: right var(--transition-speed) ease-in-out;
-            padding: 80px 15px 20px 15px; display: flex; flex-direction: column; gap: 12px;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.9); z-index: 10001;
-        }
-        .sidebar.open { right: 0; }
-
-        .nav-item {
-            display: flex; align-items: center; gap: 12px; padding: 14px 16px;
-            color: var(--text-color); border-radius: 12px; font-size: 0.95rem;
-            font-weight: 700; cursor: pointer; background: rgba(255, 255, 255, 0.03);
-            border: 1px solid transparent; transition: all 0.25s;
-        }
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255, 255, 255, 0.1); border-color: var(--border-color); color: var(--accent-color);
-        }
-
-        .announcement-ticker {
-            width: 100%; max-width: 480px; background: rgba(0, 242, 254, 0.08);
-            border: 1px solid var(--border-color); border-radius: 12px; padding: 8px 12px;
-            font-size: 0.85rem; color: var(--accent-color); margin-bottom: 20px;
-            overflow: hidden; white-space: nowrap; font-weight: 700;
-        }
-        .announcement-content { display: inline-block; animation: marquee 14s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
-        .initial-loader {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #030408; display: flex; flex-direction: column;
-            justify-content: center; align-items: center; z-index: 99999;
-            transition: transform 0.6s cubic-bezier(0.77, 0, 0.175, 1);
-        }
-        .initial-loader.slide-up { transform: translateY(-100vh); }
-
-        .loader-logo {
-            font-family: 'Changa', sans-serif; font-size: 3.5rem; font-weight: 800;
-            background: linear-gradient(135deg, #fff, var(--accent-color));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            animation: pulse 1.5s infinite alternate;
-        }
-        .loader-spinner {
-            width: 45px; height: 45px; border: 4px solid rgba(0, 242, 254, 0.1);
-            border-top: 4px solid var(--accent-color); border-radius: 50%; animation: spin 0.9s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes pulse { from { opacity: 0.6; transform: scale(0.98); } to { opacity: 1; transform: scale(1.02); } }
-
-        .container { width: 100%; max-width: 480px; text-align: center; position: relative; margin-top: 60px; }
-
-        .server-status-badge {
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4);
-            padding: 5px 14px; border-radius: 20px; font-size: 0.8rem; color: #10b981;
-            font-weight: 700; margin-bottom: 12px;
-        }
-        .status-dot {
-            width: 8px; height: 8px; background-color: #10b981; border-radius: 50%;
-            box-shadow: 0 0 8px #10b981; animation: blink 1.2s infinite;
-        }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
-        .logo {
-            font-family: 'Changa', sans-serif; font-size: 3.2rem; font-weight: 800;
-            background: linear-gradient(135deg, var(--text-color) 30%, var(--accent-color));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
-        }
-
-        .badge-vip {
-            background: var(--gold-gradient); color: #000; font-size: 0.75rem;
-            padding: 3px 10px; border-radius: 8px; font-weight: 900;
-            box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
-        }
-
-        .subtitle-box {
-            background: var(--gold-gradient); border-radius: 12px; padding: 8px 14px;
-            margin: 15px 0 25px 0; color: #000; font-size: 0.85rem; font-weight: 900;
-        }
-
-        .content-card {
-            background: var(--card-bg); backdrop-filter: blur(16px);
-            border: 1px solid var(--border-color); border-radius: 20px;
-            padding: 25px 20px; box-shadow: var(--card-shadow); transition: all 0.3s ease;
-            margin-bottom: 15px;
-        }
-
-        .platform-tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
-        .tab-btn {
-            flex: 1; padding: 10px 12px; border-radius: 12px; background: var(--card-bg);
-            border: 1px solid var(--border-color); color: var(--text-dim); cursor: pointer;
-            font-size: 0.85rem; font-weight: bold; transition: all 0.3s;
-        }
-        .tab-btn.active {
-            background: var(--primary-color); color: #fff; border-color: var(--accent-color);
-            box-shadow: 0 4px 12px rgba(138, 43, 226, 0.4);
-        }
-
-        .search-box {
-            width: 100%; padding: 12px 15px; border-radius: 12px; background: var(--card-bg);
-            border: 1px solid var(--border-color); color: var(--text-color); font-size: 0.9rem;
-            margin-bottom: 20px; text-align: center;
-        }
-
-        .content-page { display: flex; flex-direction: column; gap: 15px; }
-
-        .add-script-banner {
-            width: 100%;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: #ffffff; border: none; border-radius: 14px; padding: 16px;
-            font-size: 1.1rem; font-weight: 800; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35); transition: all 0.3s ease; margin-bottom: 15px;
-        }
-
-        .scripts-container { display: flex; flex-direction: column; gap: 12px; }
-        .script-card-item {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(15, 22, 41, 0.7); border: 1px solid var(--border-color);
-            border-radius: 14px; padding: 12px 16px; transition: all 0.25s ease;
-        }
-
-        .script-info-left { display: flex; flex-direction: column; text-align: right; gap: 2px; }
-        .script-title-text { font-size: 1rem; font-weight: 800; color: #ffffff; display: flex; align-items: center; gap: 6px; }
-        .script-map-text { font-size: 0.78rem; color: var(--accent-color); font-weight: 700; }
-        .script-author-tag { font-size: 0.7rem; color: var(--text-dim); }
-
-        .verified-badge {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 16px; height: 16px; background: #00f2fe; color: #000;
-            border-radius: 50%; font-size: 10px; font-weight: bold;
-        }
-
-        .script-card-actions { display: flex; gap: 8px; align-items: center; }
-
-        .btn-green-sm {
-            background: linear-gradient(135deg, var(--green-color), var(--green-hover));
-            color: #fff; border: none; padding: 8px 14px; border-radius: 10px;
-            font-weight: 800; font-size: 0.85rem; cursor: pointer; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-danger-sm {
-            background: rgba(255, 59, 48, 0.2); color: var(--accent-red);
-            border: 1px solid var(--accent-red); padding: 8px 10px; border-radius: 10px;
-            font-weight: 800; font-size: 0.85rem; cursor: pointer; transition: 0.2s;
-        }
-
-        .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; text-align: right; }
-        .form-group label { font-size: 0.85rem; color: var(--text-dim); font-weight: 700; }
-        .form-input {
-            width: 100%; padding: 12px; border-radius: 12px;
-            border: 1px solid var(--border-color); background: rgba(0, 0, 0, 0.4);
-            color: #fff; font-size: 0.9rem;
-        }
-        textarea.form-input { resize: vertical; min-height: 80px; }
-
-        .telegram-modal-card {
-            background: #0d111d; border: 1px solid var(--accent-color); padding: 20px;
-            border-radius: 20px; width: 350px; max-width: 92vw; display: flex; flex-direction: column;
-            gap: 15px; box-shadow: 0 0 30px rgba(0, 242, 254, 0.25); text-align: right;
-            max-height: 90vh; overflow-y: auto;
-        }
-        .tg-header-badge {
-            background: rgba(0, 242, 254, 0.1); border: 1px solid var(--accent-color);
-            color: var(--accent-color); text-align: center; padding: 6px; border-radius: 10px;
-            font-size: 0.85rem; font-weight: 800;
-        }
-        .tg-info-box { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 10px 14px; }
-        .tg-info-box h4 { font-size: 1.05rem; color: #fff; }
-        .tg-info-box span { font-size: 0.8rem; color: var(--text-dim); font-weight: 600; }
-        .tg-description-box {
-            background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--border-color);
-            border-radius: 12px; padding: 10px; font-size: 0.82rem; color: #cbd5e1; line-height: 1.5; white-space: pre-line;
-        }
-        .telegram-code-container { display: flex; flex-direction: column; border: 1px solid var(--primary-color); border-radius: 14px; overflow: hidden; background: #050711; }
-        .tg-code-top-rect { background: rgba(138, 43, 226, 0.2); padding: 8px 12px; font-size: 0.78rem; font-weight: 800; color: #fff; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(138, 43, 226, 0.3); }
-        .tg-code-square-body { padding: 12px; font-family: monospace; font-size: 0.75rem; color: #00f2fe; word-break: break-all; max-height: 90px; overflow-y: auto; direction: ltr; text-align: left; background: rgba(0,0,0,0.5); }
-        .tg-copy-action-btn { background: linear-gradient(90deg, #10b981, #059669); color: white; border: none; padding: 10px; font-weight: 800; font-size: 0.9rem; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-close-x { background: rgba(255, 59, 48, 0.15); color: var(--accent-red); border: 1px solid var(--accent-red); padding: 8px; border-radius: 12px; font-weight: 800; cursor: pointer; text-align: center; font-size: 0.9rem; }
-
-        .inner-title {
-            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color);
-            padding: 10px; border-radius: 12px; font-weight: 700; font-size: 1rem;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .card-img { width: 100%; border-radius: 14px; object-fit: cover; border: 1px solid var(--border-color); cursor: pointer; margin-top: 10px; }
-        .file-info-bar { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-dim); margin: 8px 0; }
-        .dl-btn {
-            width: 100%; padding: 12px; border-radius: 12px; border: none;
-            background: linear-gradient(90deg, #6b21a8, #8a2be2); color: #fff;
-            font-weight: 700; font-size: 0.95rem; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.3); text-decoration: none; margin-top: 8px;
-        }
-        .copy-btn { background: rgba(255, 255, 255, 0.1); border: 1px solid var(--border-color); color: var(--text-color); padding: 6px 12px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; }
-
-        .comparison-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; margin-top: 10px; color: var(--text-dim); }
-        .comparison-table th, .comparison-table td { padding: 8px; border: 1px solid var(--border-color); text-align: center; }
-        .comparison-table th { background: rgba(138, 43, 226, 0.2); color: var(--text-color); }
-
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(0,0,0,0.8); display: none; justify-content: center; align-items: center;
-            z-index: 99900; backdrop-filter: blur(8px);
-        }
-        .modal-card {
-            background: var(--card-bg); border: 1px solid var(--accent-color);
-            padding: 25px; border-radius: 20px; width: 340px; text-align: center;
-            display: flex; flex-direction: column; gap: 15px; color: var(--text-color);
-            box-shadow: var(--card-shadow); max-height: 90vh; overflow-y: auto;
-        }
-
-        .setting-row { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; font-weight: bold; }
-
-        .back-to-top {
-            position: fixed; bottom: 20px; right: 20px; width: 42px; height: 42px;
-            background: var(--primary-color); border-radius: 50%; color: #fff;
-            display: flex; justify-content: center; align-items: center; cursor: pointer;
-            opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000;
-        }
-        .back-to-top.show { opacity: 1; pointer-events: all; }
-
-        .toast-notification {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: var(--green-color); color: #fff; padding: 10px 22px; border-radius: 20px;
-            font-size: 0.85rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-            transition: transform 0.4s ease; z-index: 100001;
-        }
-        .toast-notification.active { transform: translateX(-50%) translateY(0); }
-
-        .discord-btn {
-            display: inline-flex; align-items: center; justify-content: center;
-            width: 100%; padding: 12px; border-radius: 12px; background: #5865F2;
-            border: 1px solid #404EED; color: #fff; text-decoration: none; font-weight: 700;
-            font-size: 0.9rem; margin-top: 10px;
-        }
-
-        .news-banner {
-            position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
-            width: 90%; max-width: 440px; background: rgba(138, 43, 226, 0.95);
-            border: 2px solid var(--accent-color); border-radius: 16px; padding: 12px;
-            z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            display: flex; gap: 10px; align-items: center; animation: fadeIn 0.5s ease;
-        }
-        .news-banner img { width: 45px; height: 45px; border-radius: 50%; border: 1px solid #fff; object-fit: cover; }
-        .news-content { text-align: right; font-size: 0.85rem; color: #fff; flex: 1; }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
-    <canvas id="particleCanvas"></canvas>
-    <div class="scroll-progress" id="scrollProgress"></div>
-
-    <div class="initial-loader" id="initialLoader">
+    <!-- شاشة التحميل -->
+    <div class="loader-screen" id="loaderScreen">
         <div class="loader-logo">MRX</div>
         <div class="loader-spinner"></div>
     </div>
 
-    <!-- الأخبار العاجلة -->
-    <div id="newsBannerContainer"></div>
-
-    <div class="top-settings-bar" id="topSettingsBar">
-        <div class="bar-title">MRX STORE</div>
-        <div class="bar-left-controls">
-            <button class="enc-btn btn-lua" onclick="openEncoderModal('Lua')">Lua</button>
-            <button class="enc-btn btn-py" onclick="openEncoderModal('Python')">Python</button>
-            <button class="enc-btn btn-html" onclick="openEncoderModal('HTML')">HTML</button>
-            
-            <button class="top-btn-icon" onclick="openSettingsModal()" id="langSettingsBtn">⚙️ الإعدادات</button>
-            <div class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-    </div>
-
-    <div class="sidebar" id="sidebar">
-        <div class="nav-item active" id="navHomeBtn" onclick="handleNavClick('home')">
-            <span id="menuHome">🏠 الشاشة الرئيسية</span>
-        </div>
-        <div class="nav-item" id="navScriptsBtn" onclick="handleNavClick('scripts')">
-            <span id="menuScripts">📜 السكربتات</span>
-        </div>
-        <div class="nav-item" id="adminNewsBtn" style="display:none;" onclick="openAdminNewsModal()">
-            <span>📰 قسم الأخبار</span>
-        </div>
-        <div class="nav-item" id="adminVerifyBtn" style="display:none;" onclick="openAdminVerifyModal()">
-            <span>✔️ توثيق وحظر</span>
-        </div>
-        <div class="nav-item" id="navAuthBtn" onclick="openAuthModal()">
-            <span id="userAccountStatus">👤 تسجيل دخول</span>
-        </div>
-    </div>
-
-    <div class="toast-notification" id="toast">تم العملية بنجاح!</div>
-
-    <div class="container">
-
-        <header class="header">
-            <div class="server-status-badge">
-                <span class="status-dot"></span>
-                <span id="serverStatusText">السيرفرات تعمل بكفاءة 100%</span>
-            </div>
-
-            <div class="logo-box">
-                <h1 class="logo">MRX STORE</h1>
-                <span class="badge-vip">★ VIP - PRO - MAX ★</span>
-            </div>
-            
-            <div class="subtitle-box">
-                <p id="subtitleText">أداء ممتاز جداً - أمان عالي - خوادم فائقة السرعة</p>
-            </div>
-
-            <div class="announcement-ticker">
-                <div class="announcement-content" id="announcementText">
-                    🔥 أهلاً بك في متجر هاكات / MRX لعام 2026 🚀
+    <!-- شاشة تسجيل الدخول -->
+    <div id="loginScreen" class="login-overlay active">
+        <div class="login-card">
+            <h1 class="login-title">⚡ MRX STORE ⚡</h1>
+            <p class="login-sub">سجل بحساب Gmail الحقيقي</p>
+            <div id="loginStep1">
+                <div class="input-group">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="loginEmail" placeholder="بريدك @gmail.com" required>
                 </div>
+                <div class="input-group">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="loginUsername" placeholder="اسمك المستعار" required>
+                </div>
+                <button class="btn-glow" onclick="requestOTP()">إرسال رمز التحقق <i class="fas fa-paper-plane"></i></button>
+                <div id="loginError" class="error-msg"></div>
+            </div>
+            <div id="loginStep2" style="display:none;">
+                <p style="color:#f1c40f;">📩 تم إرسال الرمز لبريدك</p>
+                <div class="input-group">
+                    <i class="fas fa-key"></i>
+                    <input type="text" id="loginOTP" placeholder="رمز التحقق (6 أرقام)" maxlength="6" style="text-align:center;letter-spacing:4px;">
+                </div>
+                <button class="btn-glow" onclick="verifyOTP()">تأكيد الدخول <i class="fas fa-check"></i></button>
+                <button class="btn-sm" onclick="document.getElementById('loginStep2').style.display='none';document.getElementById('loginStep1').style.display='block';">⬅ رجوع</button>
+            </div>
+            <div class="footer-note">🔒 جميع البيانات مشفرة | خوادم MRX</div>
+        </div>
+    </div>
+
+    <!-- الصفحة الرئيسية -->
+    <div id="mainApp" style="display:none;">
+
+        <!-- الشريط العلوي -->
+        <header class="top-bar">
+            <div class="brand">MRX <span class="badge-vip">VIP</span></div>
+            <div class="user-profile" id="userProfile">
+                <img id="headerPic" src="/static/default.png" alt="">
+                <span id="headerName">مستخدم</span>
+                <span id="headerVerify" style="display:none;">🔰</span>
+                <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+                    <span></span><span></span><span></span>
+                </button>
             </div>
         </header>
 
-        <div class="content-page" id="contentPage">
-            
-            <div class="platform-tabs">
-                <button class="tab-btn active" id="tabAndroid" onclick="switchPlatform('android')">🤖 أندرويد</button>
-                <button class="tab-btn" id="tabIos" onclick="switchPlatform('ios')">🍎 آيفون (iOS)</button>
-                <button class="tab-btn" id="tabPc" onclick="switchPlatform('pc')">💻 محاكي PC</button>
-            </div>
+        <!-- السايدبار -->
+        <div class="sidebar" id="sidebar">
+            <div class="nav-item active" onclick="navigateTo('home')"><i class="fas fa-home"></i> الرئيسية</div>
+            <div class="nav-item" onclick="navigateTo('scripts')"><i class="fas fa-code"></i> السكربتات</div>
+            <div class="nav-item" onclick="navigateTo('news')"><i class="fas fa-newspaper"></i> أخبار الموقع</div>
+            <div class="nav-item" onclick="openEncoder()"><i class="fas fa-lock"></i> تشفير (30 لغة)</div>
+            <div class="nav-item" onclick="navigateTo('top')"><i class="fas fa-fire"></i> الأكثر نشاطاً</div>
+            <div class="nav-item" id="adminNav" style="display:none;" onclick="navigateTo('admin')"><i class="fas fa-cogs"></i> تحكم</div>
+            <div class="nav-item" onclick="openSettings()"><i class="fas fa-sliders-h"></i> الإعدادات</div>
+            <div class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> خروج</div>
+        </div>
 
-            <input type="text" class="search-box" id="searchInput" onkeyup="filterCards()" placeholder="🔍 ابحث عن اسم النسخة...">
+        <!-- المحتوى -->
+        <div class="content" id="contentArea">
 
-            <div class="platform-section" id="androidSection">
-                <div class="content-card platform-card">
-                    <div class="inner-title">
-                        <span id="deltaAndroidTitle">دلتا هاك اندوريد 〔APK〕</span>
-                        <button class="copy-btn" onclick="copyLink('https://delta.filenetwork.vip/android.html')">📋 نسخ الرابط</button>
+            <!-- HOME: الشات العام -->
+            <div id="page-home" class="page active">
+                <div class="chat-container">
+                    <div class="chat-header">💬 الشات العام <span style="font-size:0.7rem;color:#888;">(ممنوع السبام)</span></div>
+                    <div class="chat-messages" id="chatMessages"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="اكتب رسالتك..." maxlength="500">
+                        <button onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
                     </div>
-                    <div class="file-info-bar">
-                        <span>📦 الحجم: 145 MB</span>
-                        <span>🛡️ مفحوص عبر VirusTotal</span>
-                    </div>
-                    <img class="card-img" src="1000203262.webp" alt="هاك دلتا" onclick="openImageModal(this.src)">
-                    <a href="https://delta.filenetwork.vip/android.html" target="_blank" class="dl-btn" onclick="trackDownload('عالمية')">📥 تثبيت روبلوكس عالميه</a>
-                    <a href="https://cdn.gloopup.net/file/Delta-2.717.985-VN.apk" target="_blank" class="dl-btn" onclick="trackDownload('فيتنامي')">📥 تثبيت روبلوكس فيتنامي</a>
                 </div>
             </div>
 
-            <div class="platform-section" id="iosSection" style="display: none;">
-                <div class="content-card platform-card">
-                    <div class="inner-title">
-                        <span>دلتا هاك ايفون 〔IOS〕</span>
-                        <button class="copy-btn" onclick="copyLink('https://delta.filenetwork.vip/ios.html')">📋 نسخ الرابط</button>
-                    </div>
-                    <div class="file-info-bar">
-                        <span>📦 الحجم: 120 MB</span>
-                        <span>🍏 يدعم IPA / Esign</span>
-                    </div>
-                    <img class="card-img" src="1000203262.webp" alt="هاك دلتا أيفون" onclick="openImageModal(this.src)">
-                    <a href="https://delta.filenetwork.vip/ios.html" target="_blank" class="dl-btn" onclick="trackDownload('آيفون')">📥 تثبيت نسخة iOS Direct</a>
+            <!-- SCRIPTS -->
+            <div id="page-scripts" class="page">
+                <button class="add-script-banner" onclick="openAddScript()">➕ إضافة سكربت جديد</button>
+                <input type="text" class="search-box" id="scriptSearch" placeholder="🔍 بحث..." oninput="filterScripts()">
+                <div id="scriptsList" class="scripts-grid"></div>
+            </div>
+
+            <!-- NEWS (أخبار الموقع) -->
+            <div id="page-news" class="page">
+                <div id="newsAdminPanel" style="display:none; background:rgba(255,215,0,0.1); padding:15px; border-radius:12px; margin-bottom:15px;">
+                    <h3 style="color:#f1c40f;">✍️ نشر خبر جديد (المسؤول فقط)</h3>
+                    <textarea id="newsContent" placeholder="نص الخبر..." rows="3" style="width:100%;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;padding:10px;"></textarea>
+                    <input type="text" id="newsImage" placeholder="رابط الصورة (اختياري)" style="width:100%;background:#1a1a1a;color:#fff;border:1px solid #333;border-radius:8px;padding:10px;margin:5px 0;">
+                    <button class="btn-glow" onclick="publishNews()" style="padding:8px;">نشر الخبر</button>
                 </div>
+                <div id="newsFeed" class="news-feed"></div>
             </div>
 
-            <div class="platform-section" id="pcSection" style="display: none;">
-                <div class="content-card empty-platform-msg">
-                    ⚠️ لا يتوفر هاك للكمبيوتر حالياً (تحت الصيانة)
-                </div>
+            <!-- TOP USERS -->
+            <div id="page-top" class="page">
+                <h2>🏆 الأكثر نشاطاً</h2>
+                <div id="topUsersList" class="top-list"></div>
             </div>
 
-            <div class="content-card">
-                <div class="inner-title">📊 مقارنة النسخ السريعة</div>
-                <table class="comparison-table">
-                    <thead>
-                        <tr>
-                            <th>النسخة</th>
-                            <th>الأصالة</th>
-                            <th>المفتاح</th>
-                            <th>الجهاز</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>العالمية</td>
-                            <td>اصلي 100\100</td>
-                            <td>يوجد</td>
-                            <td>اندوريد</td>
-                        </tr>
-                        <tr>
-                            <td>الفيتنامية</td>
-                            <td>اصلي 100\100</td>
-                            <td>يوجد</td>
-                            <td>ايفون</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- ADMIN PANEL -->
+            <div id="page-admin" class="page">
+                <h2>🔧 لوحة التحكم</h2>
+                <div id="adminUsersList"></div>
             </div>
-
-            <div class="discord-section">
-                <p style="font-size: 0.85rem; color: var(--text-dim); margin-bottom: 5px;">🔥 إجمالي التحميلات اليوم: <span id="downloadCounter" style="color: var(--accent-color); font-weight: bold;">5</span></p>
-            </div>
-
-            <button class="dl-btn" style="background: linear-gradient(135deg, #6366f1, #4f46e5);" onclick="openKeyModal()">🔑 أخذ مفتاح هاكات</button>
 
         </div>
 
-        <div class="content-page" id="scriptsPage" style="display: none;">
-            <div class="content-card">
-                <button class="add-script-banner" onclick="openAddScriptModal()">
-                    ➕ إضافة سكربت جديد
-                </button>
-
-                <div class="inner-title" style="margin-bottom:15px;">📜 قسم السكربتات المجهزة</div>
-                <input type="text" class="search-box" id="scriptSearchInput" onkeyup="filterScripts()" placeholder="🔍 بحث سكربت..." style="margin-bottom: 15px;">
-                <div class="scripts-container" id="scriptsListContainer"></div>
-            </div>
-        </div>
-
+        <!-- التذييل -->
         <footer class="footer">
-            <p id="footerText">جميع الحقوق محفوظة MRX/2026</p>
+            <p>🌟✨🌟 حقوق نشر الدراك MRX/2026 🌟✨🌟</p>
         </footer>
     </div>
 
-    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">▲</div>
+    <!-- ====== مودالات ====== -->
 
-    <!-- نافذة تسجيل الدخول -->
-    <div class="modal-overlay" id="authModal" onclick="closeModal('authModal')">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <h3>👤 تسجيل الدخول / إنشاء حساب</h3>
-            
-            <div id="authStep1">
-                <div class="form-group">
-                    <label>البريد الإلكتروني (Gmail) *</label>
-                    <input type="email" id="userEmailInput" class="form-input" placeholder="mrxapp966@gmail.com" dir="ltr">
-                </div>
-                <div class="form-group">
-                    <label>اسم المستخدم (أكثر من 4 أحرف) *</label>
-                    <input type="text" id="userNameInput" class="form-input" placeholder="اسم الحساب" oninput="suggestUsername(this.value)">
-                    <div id="usernameSuggestions" style="font-size:0.75rem; color:var(--accent-color); margin-top:4px; text-align:right;"></div>
-                </div>
-                <div class="form-group">
-                    <label>رابط الصورة الشخصية *</label>
-                    <input type="text" id="userAvatarInput" class="form-input" placeholder="https://example.com/avatar.png">
-                </div>
-
-                <button class="tg-copy-action-btn" style="width:100%; margin-top:5px;" onclick="saveUserProfile()">حفظ البيانات والتسجيل</button>
-            </div>
-
-            <button class="btn-close-x" style="margin-top:10px;" onclick="closeModal('authModal')">إغلاق</button>
+    <!-- مودال عرض السكربت -->
+    <div class="modal-overlay" id="scriptViewModal" onclick="closeModal('scriptViewModal')">
+        <div class="modal-card" onclick="event.stopPropagation();">
+            <h3 id="svTitle">اسم السكربت</h3>
+            <p id="svMap">الماب: --</p>
+            <p id="svDesc">الوصف</p>
+            <pre id="svCode" style="background:#0d0d0d;padding:12px;border-radius:8px;max-height:200px;overflow:auto;font-size:0.8rem;direction:ltr;text-align:left;"></pre>
+            <button class="btn-glow" onclick="copyText(document.getElementById('svCode').innerText)">📋 نسخ</button>
+            <button class="btn-sm" onclick="closeModal('scriptViewModal')">إغلاق</button>
         </div>
     </div>
 
-    <!-- نافذة الإداري: إرسال خبر -->
-    <div class="modal-overlay" id="newsAdminModal" onclick="closeModal('newsAdminModal')">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <h3>📢 نشر خبر عاجل</h3>
-            <div class="form-group">
-                <label>نص الخبر *</label>
-                <textarea id="newsTextInput" class="form-input" placeholder="اكتب الخبر هنا..."></textarea>
-            </div>
-            <button class="tg-copy-action-btn" style="width:100%;" onclick="publishNews()">إرسال الخبر الآن</button>
-            <button class="btn-close-x" style="margin-top:10px;" onclick="closeModal('newsAdminModal')">إلغاء</button>
+    <!-- مودال إضافة سكربت -->
+    <div class="modal-overlay" id="addScriptModal" onclick="closeModal('addScriptModal')">
+        <div class="modal-card" onclick="event.stopPropagation();">
+            <h3>➕ سكربت جديد</h3>
+            <input type="text" id="asTitle" placeholder="العنوان" class="form-input">
+            <input type="text" id="asMap" placeholder="الماب" class="form-input">
+            <textarea id="asCode" placeholder="كود التشغيل (loadstring...)" class="form-input" rows="4"></textarea>
+            <button class="btn-glow" onclick="submitScript()">نشر</button>
+            <button class="btn-sm" onclick="closeModal('addScriptModal')">إلغاء</button>
         </div>
     </div>
 
-    <!-- نافذة الإداري: التوثيق والحظر -->
-    <div class="modal-overlay" id="verifyAdminModal" onclick="closeModal('verifyAdminModal')">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <h3>⚙️ لوحة التوثيق والحظر</h3>
-            
-            <div class="form-group">
-                <label>اسم المستخدم المستهدف *</label>
-                <input type="text" id="targetUserAdmin" class="form-input" placeholder="أدخل اليوزر">
-            </div>
+    <!-- مودال التشفير (30 لغة) -->
+    <div class="modal-overlay" id="encoderModal" onclick="closeModal('encoderModal')">
+        <div class="modal-card" style="width:420px;" onclick="event.stopPropagation();">
+            <h3>🔐 تشفير السكربتات</h3>
+            <select id="encoderLang" class="form-input">
+                <option value="Lua">Lua</option>
+                <option value="Python">Python</option>
+                <option value="JavaScript">JavaScript</option>
+                <option value="HTML">HTML</option>
+                <option value="CSS">CSS</option>
+                <option value="Java">Java</option>
+                <option value="C++">C++</option>
+                <option value="C#">C#</option>
+                <option value="PHP">PHP</option>
+                <option value="Ruby">Ruby</option>
+                <option value="Go">Go</option>
+                <option value="Rust">Rust</option>
+                <option value="Swift">Swift</option>
+                <option value="Kotlin">Kotlin</option>
+                <option value="TypeScript">TypeScript</option>
+                <option value="SQL">SQL</option>
+                <option value="Shell">Shell</option>
+                <option value="Perl">Perl</option>
+                <option value="R">R</option>
+                <option value="Scala">Scala</option>
+                <option value="Haskell">Haskell</option>
+                <option value="Elixir">Elixir</option>
+                <option value="Dart">Dart</option>
+                <option value="Objective-C">Objective-C</option>
+                <option value="VBA">VBA</option>
+                <option value="Groovy">Groovy</option>
+                <option value="PowerShell">PowerShell</option>
+                <option value="Julia">Julia</option>
+                <option value="Clojure">Clojure</option>
+                <option value="Erlang">Erlang</option>
+            </select>
+            <textarea id="encoderInput" placeholder="الصق الكود المراد تشفيره..." class="form-input" rows="4"></textarea>
+            <button class="btn-glow" onclick="encodeNow()">⚡ تشفير</button>
+            <textarea id="encoderOutput" readonly placeholder="النتيجة..." class="form-input" rows="3" style="color:#00f2fe;"></textarea>
+            <button class="btn-sm" onclick="copyText(document.getElementById('encoderOutput').value)">نسخ الناتج</button>
+            <button class="btn-sm" onclick="closeModal('encoderModal')">إغلاق</button>
+        </div>
+    </div>
 
-            <div class="form-group">
-                <label>نوع العمل:</label>
-                <select id="adminActionType" class="form-input" onchange="toggleBanFields()">
-                    <option value="verify">توثيق الحساب (شارة صح)</option>
-                    <option value="ban_temp">حظر مؤقت</option>
-                    <option value="ban_perm">حظر للأبد</option>
+    <!-- مودال الإعدادات -->
+    <div class="modal-overlay" id="settingsModal" onclick="closeModal('settingsModal')">
+        <div class="modal-card" onclick="event.stopPropagation();">
+            <h3>⚙️ الإعدادات</h3>
+            <div class="setting-row"><span>الاسم</span><input type="text" id="setName" class="form-input" style="width:60%;"></div>
+            <div class="setting-row"><span>نبذة (Bio)</span><input type="text" id="setBio" class="form-input" style="width:60%;"></div>
+            <div class="setting-row"><span>الثيم</span>
+                <select id="setTheme" class="form-input" style="width:60%;">
+                    <option value="dark">أسود</option>
+                    <option value="white">أبيض</option>
+                    <option value="red">أحمر</option>
                 </select>
             </div>
-
-            <div id="banDurationFields" style="display:none; flex-direction:column; gap:6px;">
-                <label style="font-size:0.8rem; color:var(--text-dim);">مدة الحظر المؤقت:</label>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:5px;">
-                    <input type="number" id="banYears" class="form-input" placeholder="سنوات">
-                    <input type="number" id="banWeeks" class="form-input" placeholder="أسابيع">
-                    <input type="number" id="banDays" class="form-input" placeholder="أيام">
-                    <input type="number" id="banHours" class="form-input" placeholder="ساعات">
-                    <input type="number" id="banMins" class="form-input" placeholder="دقائق">
-                    <input type="number" id="banSecs" class="form-input" placeholder="ثواني">
-                </div>
+            <div class="setting-row"><span>اللغة</span>
+                <select id="setLang" class="form-input" style="width:60%;">
+                    <option value="ar">عربي</option>
+                    <option value="en">English</option>
+                </select>
             </div>
-
-            <div class="form-group" style="margin-top:10px;">
-                <label><input type="checkbox" id="disableScriptsCheckbox"> حظر نشر السكربتات لهذا المستخدم</label>
+            <div class="setting-row"><span>شكل الفقاعة</span>
+                <select id="setBubble" class="form-input" style="width:60%;">
+                    <option value="normal">Normal</option>
+                    <option value="tiktok">TikTok</option>
+                    <option value="hacker">Hacker</option>
+                    <option value="red_square">Red Square</option>
+                </select>
             </div>
-
-            <button class="tg-copy-action-btn" style="width:100%; margin-top:5px;" onclick="applyAdminAction()">حفظ التغيرات</button>
-            <button class="btn-close-x" style="margin-top:10px;" onclick="closeModal('verifyAdminModal')">إغلاق</button>
+            <button class="btn-glow" onclick="saveSettings()">حفظ التغييرات</button>
+            <button class="btn-sm" onclick="closeModal('settingsModal')">إغلاق</button>
         </div>
     </div>
 
-    <!-- نافذة تشفير السكربتات -->
-    <div class="modal-overlay" id="encoderModal" onclick="closeModal('encoderModal')">
-        <div class="modal-card" style="width: 380px; max-width:92vw;" onclick="event.stopPropagation()">
-            <h3 id="encoderHeaderTitle">🔐 تشفير سكربتات Lua</h3>
-            
-            <div class="form-group">
-                <label>ضع الكود أو الرابط المطلوب تشفيره *</label>
-                <textarea id="rawScriptToEncode" class="form-input" placeholder="loadstring(game:HttpGet('...'))()"></textarea>
-            </div>
-
-            <button class="tg-copy-action-btn" style="width:100%;" onclick="processScriptEncoding()">⚡ بدء التشفير والإخفاء الآن</button>
-
-            <div class="form-group" style="margin-top:10px;">
-                <label>الكود المشفر المحمي:</label>
-                <textarea id="encodedOutputResult" class="form-input" readonly style="color:var(--accent-color); font-family:monospace; font-size:0.75rem; min-height:90px;"></textarea>
-            </div>
-
-            <div style="display:flex; gap:8px;">
-                <button class="tg-copy-action-btn" id="copyEncodedBtn" style="flex:1; display:none;" onclick="copyEncodedCode()">📋 نسخ الكود</button>
-                <button class="btn-close-x" style="flex:1;" onclick="closeModal('encoderModal')">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة إعدادات الموقع -->
-    <div class="modal-overlay" id="settingsModal" onclick="closeModal('settingsModal')">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <h3 id="settingsHeader">⚙️ إعدادات الموقع</h3>
-            
-            <div class="setting-row">
-                <span id="themeText">المظهر (وضع داكن)</span>
-                <button class="copy-btn" onclick="toggleTheme()">أبيض / أسود 🌗</button>
-            </div>
-
-            <div class="setting-row">
-                <span>اللغة (Language)</span>
-                <button class="copy-btn" onclick="toggleLanguage()" id="langToggleBtn">English 🌐</button>
-            </div>
-
-            <button class="copy-btn" onclick="closeModal('settingsModal')" style="padding: 10px; margin-top: 10px;">إغلاق</button>
-        </div>
-    </div>
-
-    <!-- نافذة عرض السكربت -->
-    <div class="modal-overlay" id="scriptViewModal" onclick="closeModal('scriptViewModal')">
-        <div class="telegram-modal-card" onclick="event.stopPropagation()">
-            <div class="tg-header-badge">⚡ MRX SCRIPT ENGINE ⚡</div>
-            <img id="tgScriptImg" src="" style="width:100%; border-radius:12px; display:none; border:1px solid var(--border-color);">
-            <div class="tg-info-box">
-                <h4 id="tgScriptTitle">اسم السكربت</h4>
-                <span id="tgScriptMap">الماب: --</span>
-            </div>
-            <div class="tg-description-box" id="tgScriptDesc">الوصف هنا...</div>
-            <div class="telegram-code-container">
-                <div class="tg-code-top-rect">
-                    <span>📜 SCRIPT CODE</span>
-                    <span>READY</span>
-                </div>
-                <div class="tg-code-square-body" id="tgCodeText">-- Code goes here...</div>
-            </div>
-            <button class="tg-copy-action-btn" onclick="copyCurrentScriptCode()">📋 نسخ السكربت للحافظة</button>
-            <button class="btn-close-x" onclick="closeModal('scriptViewModal')">❌ إغلاق النافذة</button>
-        </div>
-    </div>
-
-    <!-- نافذة إضافة سكربت جديد -->
-    <div class="modal-overlay" id="addScriptModal" onclick="closeModal('addScriptModal')">
-        <div class="telegram-modal-card" onclick="event.stopPropagation()">
-            <div class="tg-header-badge">➕ نشر سكربت جديد</div>
-            
-            <div class="form-group">
-                <label>اسم السكربت *</label>
-                <input type="text" id="newScriptName" class="form-input" placeholder="مثال: سكربت ماب البيوت">
-            </div>
-
-            <div class="form-group">
-                <label>يشتغل على ماب *</label>
-                <input type="text" id="newScriptMap" class="form-input" placeholder="مثال: ماب البيوت / الكل">
-            </div>
-
-            <div class="form-group">
-                <label>رابط الصورة (اختياري)</label>
-                <input type="text" id="newScriptImg" class="form-input" placeholder="ضع رابط الصورة هنا...">
-            </div>
-
-            <div class="form-group">
-                <label>الوصف / ملاحظة</label>
-                <textarea id="newScriptDesc" class="form-input" placeholder="اكتب ملاحظة أو وصف للسكربت..."></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>كود التشغيل (loadstring) *</label>
-                <textarea id="newScriptCode" class="form-input" placeholder="loadstring(game:HttpGet(...))()"></textarea>
-            </div>
-
-            <button class="tg-copy-action-btn" onclick="submitNewScript()">🚀 نشر السكربت الآن</button>
-            <button class="btn-close-x" onclick="closeModal('addScriptModal')">إلغاء</button>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="keyModal" onclick="closeModal('keyModal')">
-        <div class="modal-card" onclick="event.stopPropagation()">
-            <h3>🔑 أخذ مفتاح هاكات</h3>
-            <p style="font-size:0.9rem; text-align:center; color:var(--text-dim); line-height: 1.6;">
-                انتقل إلي قناتي ديسكورد و ادخل إلا قسم الاوامر و ادخل إلي غرفه مفتاح دلتا هاك للحصول على المفتاح تلقائياً.
-            </p>
-            <a href="https://discord.gg/65Evss3nk" target="_blank" class="discord-btn">انضم إلي سيرفر ديسكورد</a>
-            <button class="copy-btn" style="padding: 10px; margin-top: 5px;" onclick="closeModal('keyModal')">إغلاق</button>
-        </div>
-    </div>
-
+    <!-- مودال عرض الصور -->
     <div class="modal-overlay" id="imageModal" onclick="closeModal('imageModal')">
         <img id="modalImg" src="" style="max-width:90%; max-height:80%; border-radius:12px;">
     </div>
 
-    <script>
-        let currentLang = localStorage.getItem('mrx_lang') || 'ar';
-        let activeScriptCode = "";
-        let selectedEncoderLanguage = "Lua";
+    <div id="toast" class="toast"></div>
 
-        let currentUser = JSON.parse(localStorage.getItem('mrx_user_profile')) || {
-            email: "",
-            username: "",
-            avatar: "",
-            verified: false,
-            banned: false,
-            banUntil: 0,
-            canPostScripts: true
-        };
-
-        let verifiedUsers = JSON.parse(localStorage.getItem('mrx_verified_users')) || ["ryadsadq806@gmail.com"];
-        let bannedUsers = JSON.parse(localStorage.getItem('mrx_banned_users')) || {};
-
-        const defaultScripts = [
-            {
-                id: 1,
-                name: "MRX",
-                map: "ماب البيوت",
-                desc: "يشتغل ماب البيوت بكفاءة عاليه",
-                code: `loadstring(game:HttpGet("https://raw.githubusercontent.com/hatm12345cc-source/TRX/refs/heads/main/MR•HUB"))()`,
-                image: "",
-                author: "MRX ADMIN",
-                authorEmail: "mrxapp966@gmail.com"
-            }
-        ];
-
-        let scriptsData = JSON.parse(localStorage.getItem('mrx_custom_scripts')) || defaultScripts;
-
-        window.addEventListener('load', () => {
-            if(localStorage.getItem('mrx_theme') === 'light') {
-                document.body.classList.add('light-theme');
-            }
-            applyLanguageSettings();
-            checkUserPermissions();
-
-            setTimeout(() => {
-                document.getElementById('initialLoader').classList.add('slide-up');
-            }, 600);
-        });
-
-        function checkUserPermissions() {
-            if(currentUser.email) {
-                document.getElementById('userAccountStatus').innerText = "👤 " + currentUser.username;
-            }
-
-            // الميزات الخاصة بالإيميل المحدد
-            if(currentUser.email === "ryadsadq806@gmail.com") {
-                document.getElementById('adminNewsBtn').style.display = 'flex';
-                document.getElementById('adminVerifyBtn').style.display = 'flex';
-            } else {
-                document.getElementById('adminNewsBtn').style.display = 'none';
-                document.getElementById('adminVerifyBtn').style.display = 'none';
-            }
-        }
-
-        function suggestUsername(val) {
-            const box = document.getElementById('usernameSuggestions');
-            if(val.length > 0 && val.length < 5) {
-                box.innerText = "اقتراح: " + val + "_pro2026, " + val + "_mrx";
-            } else {
-                box.innerText = "";
-            }
-        }
-
-        function saveUserProfile() {
-            const email = document.getElementById('userEmailInput').value.trim();
-            const username = document.getElementById('userNameInput').value.trim();
-            const avatar = document.getElementById('userAvatarInput').value.trim();
-
-            if(!email || !username || username.length <= 4) {
-                alert("يرجى كتابة بريد إلكتروني واسم مستخدم أكثر من 4 أحرف!");
-                return;
-            }
-
-            currentUser.email = email;
-            currentUser.username = username;
-            currentUser.avatar = avatar || "https://via.placeholder.com/150";
-
-            if(verifiedUsers.includes(email) || email === "ryadsadq806@gmail.com") {
-                currentUser.verified = true;
-            }
-
-            localStorage.setItem('mrx_user_profile', JSON.stringify(currentUser));
-            checkUserPermissions();
-            closeModal('authModal');
-            showToast("تم حفظ بيانات الحساب بنجاح!");
-            renderScripts(scriptsData);
-        }
-
-        // لوحة الأخبار الخاصة بالإيميل المميز
-        function openAdminNewsModal() {
-            document.getElementById('newsAdminModal').style.display = 'flex';
-        }
-
-        function publishNews() {
-            const text = document.getElementById('newsTextInput').value.trim();
-            if(!text) return;
-
-            const banner = document.getElementById('newsBannerContainer');
-            banner.innerHTML = `
-                <div class="news-banner">
-                    <img src="${currentUser.avatar || 'https://via.placeholder.com/150'}" alt="profile">
-                    <div class="news-content">
-                        <strong>خبر عاجل من ${currentUser.username}:</strong>
-                        <p>${text}</p>
-                    </div>
-                </div>
-            `;
-
-            closeModal('newsAdminModal');
-            showToast("تم نشر الخبر لمدة 10 ثواني!");
-
-            setTimeout(() => {
-                banner.innerHTML = '';
-            }, 10000);
-        }
-
-        // لوحة التوثيق والحظر
-        function openAdminVerifyModal() {
-            document.getElementById('verifyAdminModal').style.display = 'flex';
-        }
-
-        function toggleBanFields() {
-            const type = document.getElementById('adminActionType').value;
-            document.getElementById('banDurationFields').style.display = (type === 'ban_temp') ? 'flex' : 'none';
-        }
-
-        function applyAdminAction() {
-            const target = document.getElementById('targetUserAdmin').value.trim();
-            const action = document.getElementById('adminActionType').value;
-            const disableScripts = document.getElementById('disableScriptsCheckbox').checked;
-
-            if(!target) return;
-
-            if(action === 'verify') {
-                if(!verifiedUsers.includes(target)) verifiedUsers.push(target);
-                localStorage.setItem('mrx_verified_users', JSON.stringify(verifiedUsers));
-                showToast("تم توثيق المستخدم بنجاح!");
-            } else if(action === 'ban_perm') {
-                bannedUsers[target] = { perm: true, disableScripts: disableScripts };
-                localStorage.setItem('mrx_banned_users', JSON.stringify(bannedUsers));
-                showToast("تم حظر المستخدم للأبد!");
-            } else if(action === 'ban_temp') {
-                const y = parseInt(document.getElementById('banYears').value) || 0;
-                const d = parseInt(document.getElementById('banDays').value) || 0;
-                const h = parseInt(document.getElementById('banHours').value) || 0;
-                const m = parseInt(document.getElementById('banMins').value) || 0;
-                const s = parseInt(document.getElementById('banSecs').value) || 0;
-
-                const durationMs = (((((y*365 + d)*24 + h)*60 + m)*60) + s) * 1000;
-                const until = Date.now() + durationMs;
-
-                bannedUsers[target] = { perm: false, until: until, disableScripts: disableScripts };
-                localStorage.setItem('mrx_banned_users', JSON.stringify(bannedUsers));
-                showToast("تم الحظر المؤقت بنجاح!");
-            }
-
-            closeModal('verifyAdminModal');
-        }
-
-        // التشفير المحمي
-        function openEncoderModal(lang) {
-            selectedEncoderLanguage = lang;
-            document.getElementById('encoderHeaderTitle').innerText = "🔐 تشفير (" + lang + ")";
-            document.getElementById('encoderModal').style.display = "flex";
-        }
-
-        function processScriptEncoding() {
-            const raw = document.getElementById('rawScriptToEncode').value.trim();
-            if(!raw) return;
-
-            let b64 = btoa(unescape(encodeURIComponent(raw)));
-            let targetUrl = "https://raw.githubusercontent.com/mrx-vault/main/script.lua?data=" + b64;
-
-            let result = "";
-            if(selectedEncoderLanguage === 'Lua') {
-                result = `loadstring(game:HttpGet("${targetUrl}"))()`;
-            } else if(selectedEncoderLanguage === 'Python') {
-                result = `import urllib.request\nexec(urllib.request.urlopen("${targetUrl}").read().decode('utf-8'))`;
-            } else if(selectedEncoderLanguage === 'HTML') {
-                result = `<script src="${targetUrl}"><\/script>`;
-            }
-
-            document.getElementById('encodedOutputResult').value = result;
-            document.getElementById('copyEncodedBtn').style.display = "block";
-            showToast("تم التشفير والتغطية بنجاح!");
-        }
-
-        function copyEncodedCode() {
-            navigator.clipboard.writeText(document.getElementById('encodedOutputResult').value);
-            showToast("تم نسخ الكود المشفر!");
-        }
-
-        function renderScripts(items) {
-            const container = document.getElementById('scriptsListContainer');
-            container.innerHTML = '';
-            
-            items.forEach(script => {
-                const card = document.createElement('div');
-                card.className = 'script-card-item';
-
-                const isAuthorVerified = verifiedUsers.includes(script.authorEmail) || script.authorEmail === "ryadsadq806@gmail.com";
-                const badgeHtml = isAuthorVerified ? `<span class="verified-badge">✓</span>` : '';
-
-                card.innerHTML = `
-                    <div class="script-info-left">
-                        <span class="script-title-text">${script.name} ${badgeHtml}</span>
-                        <span class="script-map-text">🎮 ${script.map}</span>
-                        <span class="script-author-tag">الناشر: ${script.author || 'MRX'}</span>
-                    </div>
-                    <div class="script-card-actions">
-                        <button class="btn-green-sm" onclick="openScriptModal(${script.id})">عرض / نسخ</button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        function submitNewScript() {
-            // التحقق من الحظر
-            const banInfo = bannedUsers[currentUser.username] || bannedUsers[currentUser.email];
-            if(banInfo) {
-                if(banInfo.perm || (banInfo.until && Date.now() < banInfo.until) || banInfo.disableScripts) {
-                    alert("حسابك محظور من إضافة السكربتات!");
-                    return;
-                }
-            }
-
-            const name = document.getElementById('newScriptName').value.trim();
-            const map = document.getElementById('newScriptMap').value.trim();
-            const image = document.getElementById('newScriptImg').value.trim();
-            const desc = document.getElementById('newScriptDesc').value.trim();
-            const code = document.getElementById('newScriptCode').value.trim();
-
-            if(!name || !map || !code) return;
-
-            const newScript = {
-                id: Date.now(),
-                name: name,
-                map: map,
-                image: image,
-                desc: desc,
-                code: code,
-                author: currentUser.username || "مستخدم",
-                authorEmail: currentUser.email
-            };
-
-            scriptsData.unshift(newScript);
-            localStorage.setItem('mrx_custom_scripts', JSON.stringify(scriptsData));
-            closeModal('addScriptModal');
-            renderScripts(scriptsData);
-            showToast('✅ تم نشر السكربت بنجاح!');
-        }
-
-        function openScriptModal(id) {
-            const script = scriptsData.find(s => s.id === id);
-            if(!script) return;
-            document.getElementById('tgScriptTitle').innerText = script.name;
-            document.getElementById('tgScriptMap').innerText = "الماب: " + script.map;
-            document.getElementById('tgScriptDesc').innerText = script.desc || "";
-            document.getElementById('tgCodeText').innerText = script.code;
-            activeScriptCode = script.code;
-
-            const imgElem = document.getElementById('tgScriptImg');
-            if(script.image) {
-                imgElem.src = script.image;
-                imgElem.style.display = 'block';
-            } else {
-                imgElem.style.display = 'none';
-            }
-
-            document.getElementById('scriptViewModal').style.display = 'flex';
-        }
-
-        function copyCurrentScriptCode() {
-            navigator.clipboard.writeText(activeScriptCode);
-            showToast('📋 تم نسخ السكربت بنجاح!');
-        }
-
-        function toggleLanguage() {
-            currentLang = (currentLang === 'ar') ? 'en' : 'ar';
-            localStorage.setItem('mrx_lang', currentLang);
-            applyLanguageSettings();
-        }
-
-        function applyLanguageSettings() {
-            const root = document.getElementById('htmlRoot');
-            if(currentLang === 'en') {
-                root.setAttribute('dir', 'ltr');
-                root.setAttribute('lang', 'en');
-                document.getElementById('langToggleBtn').innerText = "العربية 🌐";
-                document.getElementById('menuHome').innerText = "🏠 Home";
-                document.getElementById('menuScripts').innerText = "📜 Scripts";
-                document.getElementById('subtitleText').innerText = "High Performance - Maximum Security - Ultra Fast Servers";
-            } else {
-                root.setAttribute('dir', 'rtl');
-                root.setAttribute('lang', 'ar');
-                document.getElementById('langToggleBtn').innerText = "English 🌐";
-                document.getElementById('menuHome').innerText = "🏠 الشاشة الرئيسية";
-                document.getElementById('menuScripts').innerText = "📜 السكربتات";
-                document.getElementById('subtitleText').innerText = "أداء ممتاز جداً - أمان عالي - خوادم فائقة السرعة";
-            }
-        }
-
-        function toggleSidebar() {
-            document.getElementById('menuToggle').classList.toggle('active');
-            document.getElementById('sidebar').classList.toggle('open');
-        }
-
-        function handleNavClick(target) {
-            toggleSidebar();
-            document.getElementById('navHomeBtn').classList.remove('active');
-            document.getElementById('navScriptsBtn').classList.remove('active');
-
-            if(target === 'home') {
-                document.getElementById('navHomeBtn').classList.add('active');
-                document.getElementById('scriptsPage').style.display = 'none';
-                document.getElementById('contentPage').style.display = 'flex';
-            } else if(target === 'scripts') {
-                document.getElementById('navScriptsBtn').classList.add('active');
-                document.getElementById('contentPage').style.display = 'none';
-                document.getElementById('scriptsPage').style.display = 'flex';
-                renderScripts(scriptsData);
-            }
-        }
-
-        function switchPlatform(platform) {
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('androidSection').style.display = 'none';
-            document.getElementById('iosSection').style.display = 'none';
-            document.getElementById('pcSection').style.display = 'none';
-
-            if(platform === 'android') {
-                document.getElementById('tabAndroid').classList.add('active');
-                document.getElementById('androidSection').style.display = 'block';
-            } else if(platform === 'ios') {
-                document.getElementById('tabIos').classList.add('active');
-                document.getElementById('iosSection').style.display = 'block';
-            } else if(platform === 'pc') {
-                document.getElementById('tabPc').classList.add('active');
-                document.getElementById('pcSection').style.display = 'block';
-            }
-        }
-
-        function toggleTheme() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('mrx_theme', isLight ? 'light' : 'dark');
-            showToast(isLight ? 'تم تفعيل الوضع الفاتح' : 'تم تفعيل الوضع الداكن');
-        }
-
-        function copyLink(url) {
-            navigator.clipboard.writeText(url);
-            showToast('📋 تم نسخ الرابط بنجاح!');
-        }
-
-        function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.classList.add('active');
-            setTimeout(() => toast.classList.remove('active'), 2500);
-        }
-
-        function trackDownload(name) {
-            let count = parseInt(document.getElementById('downloadCounter').innerText);
-            document.getElementById('downloadCounter').innerText = count + 1;
-            showToast('🚀 بدء التحميل: ' + name);
-        }
-
-        function openAddScriptModal() { document.getElementById('addScriptModal').style.display = 'flex'; }
-        function openSettingsModal() { document.getElementById('settingsModal').style.display = 'flex'; }
-        function openKeyModal() { document.getElementById('keyModal').style.display = 'flex'; }
-        function openAuthModal() { document.getElementById('authModal').style.display = 'flex'; }
-        function openImageModal(src) { document.getElementById('modalImg').src = src; document.getElementById('imageModal').style.display = 'flex'; }
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-        function scrollToTop() { window.scrollTo({top: 0, behavior: 'smooth'}); }
-
-        // Canvas Particles
-        const canvas = document.getElementById('particleCanvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = Math.random() * 1 - 0.5;
-                this.speedY = Math.random() * 1 - 0.5;
-            }
-            update() {
-                this.x += this.speedX; this.y += this.speedY;
-                if(this.x > canvas.width) this.x = 0;
-                if(this.x < 0) this.x = canvas.width;
-                if(this.y > canvas.height) this.y = 0;
-                if(this.y < 0) this.y = canvas.height;
-            }
-            draw() {
-                ctx.fillStyle = 'rgba(0, 242, 254, 0.4)';
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-        for(let i=0; i<35; i++) particles.push(new Particle());
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-    </script>
+    <script src="script.js"></script>
 </body>
-</html>
+    </html>
