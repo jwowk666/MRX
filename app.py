@@ -18,16 +18,16 @@ app = Flask(__name__)
 app.secret_key = 'MRX_ULTRA_SECRET_2026'
 CORS(app)
 
-# ===== إعدادات البريد =====
+# ===== إعدادات البريد (غيّرها إلى بياناتك الحقيقية) =====
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-SMTP_USER = "your_email@gmail.com"  # غيّر لبريدك
-SMTP_PASS = "your_app_password"     # غيّر لكلمة مرور التطبيق
+SMTP_USER = "your_email@gmail.com"    # غيّر إلى بريدك
+SMTP_PASS = "your_app_password"       # غيّر إلى كلمة مرور التطبيق
 
 def send_verification_email(to_email, code):
     try:
-        msg = MIMEText(f"رمز التحقق: {code}\nصلاحية 5 دقائق.")
-        msg['Subject'] = 'رمز تحقق MRX'
+        msg = MIMEText(f"رمز التحقق الخاص بك هو: {code}\n\nصالح لمدة 5 دقائق.")
+        msg['Subject'] = 'رمز تحقق متجر MRX'
         msg['From'] = SMTP_USER
         msg['To'] = to_email
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
@@ -156,32 +156,22 @@ def is_script_safe(code):
 def get_script_hash(code):
     return hashlib.sha256(code.encode()).hexdigest()
 
-# ===== الجدار الناري وحماية DDoS (معدل طلبات + فلتر) =====
+# ===== الجدار الناري وحماية DDoS =====
 request_counts = {}
 BLOCKED_IPS = {}
-
-def firewall_check():
-    """فلترة الطلبات المشبوهة (DDoS)"""
-    ip = request.remote_addr
-    # حماية من الطلبات المتكررة جداً
-    now = time.time()
-    if ip in BLOCKED_IPS and BLOCKED_IPS[ip] > now:
-        return True
-    return False
 
 def rate_limit(limit=5, per=10):
     def decorator(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
-            if firewall_check():
-                return jsonify({'error': 'Blocked by firewall'}), 403
             ip = request.remote_addr
             now = time.time()
+            if ip in BLOCKED_IPS and BLOCKED_IPS[ip] > now:
+                return jsonify({'error': 'Blocked by firewall'}), 403
             if ip not in request_counts:
                 request_counts[ip] = []
             request_counts[ip] = [t for t in request_counts[ip] if now - t < per]
             if len(request_counts[ip]) >= limit:
-                # حظر مؤقت 60 ثانية
                 BLOCKED_IPS[ip] = now + 60
                 return jsonify({'error': 'Too many requests. Blocked.'}), 429
             request_counts[ip].append(now)
@@ -189,7 +179,7 @@ def rate_limit(limit=5, per=10):
         return wrapped
     return decorator
 
-# بروكسي مدمج (VPN داخلي) لتصفح المواقع بشكل مجهول
+# ===== بروكسي مدمج (VPN) =====
 @app.route('/api/proxy', methods=['GET'])
 @rate_limit(limit=15, per=30)
 def proxy_request():
@@ -202,8 +192,7 @@ def proxy_request():
     except:
         return jsonify({'error': 'Proxy failed'}), 500
 
-# ===== API =====
-
+# ===== API الرئيسية =====
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
@@ -231,6 +220,7 @@ def send_verification():
         return jsonify({'success': True})
     return jsonify({'error': 'فشل إرسال البريد'}), 500
 
+# تأكيد الدخول
 @app.route('/api/verify_login', methods=['POST'])
 @rate_limit(limit=5, per=30)
 def verify_login():
@@ -294,7 +284,7 @@ def upload_profile():
         return jsonify({'success': True, 'profile_url': profile_url})
     return jsonify({'error': 'صيغة غير مدعومة'}), 400
 
-# ===== إعدادات المستخدم (تحديث) =====
+# إعدادات المستخدم
 @app.route('/api/user/settings', methods=['PUT'])
 @rate_limit(limit=10, per=30)
 def update_settings():
@@ -319,7 +309,7 @@ def update_settings():
         update_user_field(user_id, 'bubble_style', bubble_style)
     return jsonify({'success': True})
 
-# ===== الشات العام =====
+# ===== الشات =====
 @app.route('/api/chat', methods=['GET'])
 @rate_limit(limit=20, per=10)
 def get_chat():
@@ -420,6 +410,28 @@ def edit_script(script_id):
     conn.close()
     return jsonify({'success': True, 'malicious': malicious})
 
+# حذف السكربت (تمت إضافته لتكامل الـ JS)
+@app.route('/api/script/<int:script_id>', methods=['DELETE'])
+@rate_limit(limit=5, per=60)
+def delete_script(script_id):
+    if 'user_id' not in session:
+        return jsonify({'error': 'غير مسجل'}), 401
+    conn = sqlite3.connect('database.db')
+    c = conn.cursor()
+    c.execute("SELECT user_id FROM scripts WHERE id = ?", (script_id,))
+    row = c.fetchone()
+    if not row:
+        conn.close()
+        return jsonify({'error': 'غير موجود'}), 404
+    admin = get_user_by_email('ryadsadq806@gmail.com')
+    if row[0] != session['user_id'] and (not admin or session['user_id'] != admin[0]):
+        conn.close()
+        return jsonify({'error': 'لا صلاحية'}), 403
+    c.execute("DELETE FROM scripts WHERE id = ?", (script_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({'success': True})
+
 # ===== أخبار الموقع (تفاعل تيليجرام + إيموجيز) =====
 @app.route('/api/news', methods=['GET'])
 @rate_limit(limit=20, per=10)
@@ -432,10 +444,8 @@ def get_news():
     posts = c.fetchall()
     result = []
     for p in posts:
-        # جلب الريأكشنز
         c.execute("SELECT emoji, COUNT(*) FROM reactions WHERE post_id = ? GROUP BY emoji", (p[0],))
         reactions = {row[0]: row[1] for row in c.fetchall()}
-        # هل تفاعل المستخدم الحالي؟
         user_react = None
         if 'user_id' in session:
             c.execute("SELECT emoji FROM reactions WHERE post_id = ? AND user_id = ?", (p[0], session['user_id']))
@@ -490,7 +500,6 @@ def toggle_reaction():
     user_id = session['user_id']
     conn = sqlite3.connect('database.db')
     c = conn.cursor()
-    # إذا كان المستخدم قد تفاعل بالفعل بنفس الإيموجي -> إزالة
     c.execute("SELECT id FROM reactions WHERE post_id = ? AND user_id = ? AND emoji = ?", (post_id, user_id, emoji))
     existing = c.fetchone()
     if existing:
@@ -498,7 +507,6 @@ def toggle_reaction():
         conn.commit()
         conn.close()
         return jsonify({'success': True, 'action': 'removed'})
-    # إذا كان تفاعل مختلف -> استبدال
     c.execute("SELECT id FROM reactions WHERE post_id = ? AND user_id = ?", (post_id, user_id))
     old = c.fetchone()
     if old:
